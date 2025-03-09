@@ -4,6 +4,7 @@ import glob
 
 def check(filename: str):
     tabs = set()
+    prev_no_backslash = True
 
     with open(filename) as file:
         for line_no, line in enumerate(file, 1):
@@ -16,9 +17,12 @@ def check(filename: str):
 
             first_non_ws_pos = len(right_stripped) - len(right_stripped.lstrip())
             if first_non_ws_pos == 0:
+                prev_no_backslash = True
                 continue
 
-            tabs.add(line[:first_non_ws_pos])
+            if prev_no_backslash:
+                tabs.add(line[:first_non_ws_pos])
+            prev_no_backslash = right_stripped[-1] != '\\'
 
     if len(tabs) > 1:
         print(f'Too many unique tabulation sequences in {filename}:')
